@@ -1,0 +1,8 @@
+- name: Deployer Gitlab avec Ansible
+  hosts: gitlab
+  become: yes
+
+  roles:
+    - common
+    - bdd
+    - gitlab

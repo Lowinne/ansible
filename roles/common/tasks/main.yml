@@ -1,0 +1,13 @@
+- name: Mettre à jour les paquets
+  apt:
+    update_cache: yes
+
+- name: Installer les paquets nécessaires
+  apt:
+    name:
+      - vim
+      - git
+      - wget
+      - curl
+      - apache2-utils
+    state: present

@@ -1,0 +1,66 @@
+- name: Install PostgreSQL
+  apt:
+    name: postgresql
+    state: present
+    update_cache: yes
+
+- name: Install psycopg2 dependencies for PostgreSQL
+  apt:
+    name: python3-psycopg2
+    state: present
+    update_cache: yes
+
+- name: Assurer le démarrage de PostgreSQL
+  service:
+    name: postgresql
+    state: started
+    enabled: true
+
+- name: "restart postgres"
+  service: name=postgresql state=restarted
+
+- name: "Create the databases"
+  postgresql_db:
+    state: present
+    name: "{{ item }}"
+  become: yes
+  become_user: postgres
+  loop:
+    - all
+    - dev
+    - stage
+    - prod
+
+- name: "Create db user"
+  postgresql_user:
+    state: present
+    name: "vagrant"
+    password: "12345"
+  become: yes
+  become_user: postgres
+
+- name: "Grant vagrant access to app "
+  postgresql_privs:
+    type: database
+    database: "{{ item }}"
+    roles: "vagrant"
+    grant_option: no
+    privs: all
+  become: yes
+  become_user: postgres
+  loop:
+    - all
+    - dev
+    - stage
+    - prod
+
+- name: "Allow md5 connection for the db user"
+  postgresql_pg_hba:
+    dest: "/etc/postgresql/15/main/pg_hba.conf"
+    contype: host
+    databases: all
+    method: md5
+    users: "vagrant"
+    create: true
+  become: yes
+  become_user: postgres

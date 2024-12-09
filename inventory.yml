@@ -1,0 +1,9 @@
+all:
+  children:
+    gitlab:
+      hosts:
+        192.168.220.130:
+          ansible_connection: ssh
+          ansible_user: root
+          ansible_password: "Espoir15!"
+
